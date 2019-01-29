@@ -1,0 +1,26 @@
+{
+  "name": "transperthapi",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "pretest": "./node_modules/.bin/eslint --ignore-path .eslintignore ./src/*",
+    "test": "./node_modules/.bin/nyc --reporter=html --reporter=text ./node_modules/.bin/mocha --timeout 5000",
+    "coverage": "./node_modules/.bin/nyc report --reporter=text-lcov | ./node_modules/.bin/coveralls",
+    "eslint-fix": "eslint --ignore-path .eslintignore . --fix"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "cheerio": "^1.0.0-rc.2",
+    "express": "^4.16.4"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "coveralls": "^3.0.2",
+    "eslint": "^5.12.1",
+    "mocha": "^5.2.0",
+    "nyc": "^13.1.0"
+  }
+}
