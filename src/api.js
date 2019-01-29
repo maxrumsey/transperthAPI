@@ -21,7 +21,6 @@ class API {
     return new Promise((resolve, reject) => {
       Axios.get(buildSmartRiderEndpoint(this.options, number))
         .then(data => {
-          if (!data) return reject('Data not found.')
           const html = Cheerio.load(data.data);
           const response = {
             balance: html('#lblCurrentBalance').contents()[0].data,
@@ -40,11 +39,10 @@ class API {
     })
   }
   busStopTimes(stop_number) {
-    if (!stop_number) throw new Error('SmartRider number not present.');
+    if (!stop_number) throw new Error('Stop number not present.');
     return new Promise((resolve, reject) => {
       Axios.get(buildBusStopEndpoint(this.options, stop_number))
         .then(data => {
-          if (!data) return reject('Data not found.')
           // Initialises Variables
           const text = Cheerio.load(data.data).text().split(' '),
             routes = [],
