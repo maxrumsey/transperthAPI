@@ -9,7 +9,9 @@ class API {
     this.options = {
       endpoint: opts.endpoint || 'http://136213.mobi/',
       smartRiderEndpoint: opts.smartRiderEndpoint || 'SmartRider/SmartRiderResult.aspx',
-      busStopEndpoint: opts.busStopEndpoint || 'Bus/StopResults.aspx'
+      busStopEndpoint: opts.busStopEndpoint || 'Bus/StopResults.aspx',
+      ferryEndpoint: opts.ferryEndpoint || 'Ferry/FerryResults.aspx',
+      trainEndpoint: opts.trainEndpoint || 'Trains/TrainResults.aspx'
     };
   }
   smartRiderInfo(smartrider_id) {
@@ -64,7 +66,7 @@ class API {
               let words = [];
               for (var x = i + 1; x < text.length; x++) {
                 if (text[x].includes('\n')) {
-                  words.push(text[x].replace('\n', '').replace('\t\t\t\t', ''))
+                  words.push(text[x].replace('\n', '').replace(/\t/g, ''))
                   break;
                 } else {
                   words.push(text[x])
@@ -97,6 +99,131 @@ class API {
         })
     })
   }
+  trainTimes({direction, trainline, station}) {
+    if (!direction) throw new Error('Direction not present. Must be either `from Perth` or `to Perth`.');
+    if (!trainline) throw new Error('Trainline not present');
+    if (!station) throw new Error('Train Station not present.');
+    return new Promise((resolve, reject) => {
+      Axios.get(buildTrainEndpoint(this.options, direction, trainline, station))
+        .then(data => {
+          const text = Cheerio.load(data.data).text().split(' '),
+            scheduled = [],
+            running = [],
+            patterns = [],
+            platforms = [];
+          for (var i = 0; i < text.length; i++) {
+            if (text[i] == 'Scheduled') {
+              scheduled.push(text[i + 2].replace('\n', ''))
+            }
+            if (text[i] == 'Platform') {
+              platforms.push(text[i + 1].replace('\n', ''))
+            }
+            if (text[i] == 'Running') {
+              running.push(text[i + 2].replace('\n', ''))
+            }
+            if (text[i] == 'Pattern') {
+              let stops = [];
+              for (var x = i; x < text.length; x++) {
+                if (text[x].includes('\n')) {
+                  stops.push(text[x].replace('\n', '').replace('\t\t\t\t', ''))
+                  break;
+                } else {
+                  stops.push(text[x])
+                }
+              }
+              patterns.push(stops.join(' '));
+            }
+
+          }
+          const response = {
+            trains: [],
+            meta: {
+              endpoint: buildTrainEndpoint(this.options, direction, trainline, station).replace(/ /g, '%20')
+            }
+          }
+          for (var i = 0; i < platforms.length; i++) {
+            response.trains.push({
+              scheduled_time: scheduled[i],
+              running_time: running[i],
+              platform: platforms[i],
+              stopping_pattern: patterns[i]
+            })
+          }
+          resolve(response)
+        })
+        .catch(err => {
+          return reject(err)
+        })
+    })
+  }
+  ferryTimes(stop_number) {
+    if (!stop_number) throw new Error('Stop number not present.');
+    return new Promise((resolve, reject) => {
+      Axios.get(buildFerryEndpoint(this.options, stop_number))
+        .then(data => {
+          // Initialises Variables
+          const text = Cheerio.load(data.data).text().split(' '),
+            routes = [],
+            times = [],
+            departs = [];
+          /*
+           * Loops through all the spaces, looking for keywords that indicate
+           * a value is next. If a keyword is found, pushes the respective
+           * value to the respective array.
+           */
+          for (var i = 0; i < text.length; i++) {
+            if (text[i] == 'Route') {
+              let words = [];
+              for (var x = i + 1; x < text.length; x++) {
+                if (text[x].includes('\n')) {
+                  words.push(text[x].replace('\n', '').replace(/\t/g, ''))
+                  break;
+                } else {
+                  words.push(text[x])
+                }
+              }
+              routes.push(words.join(' '));
+            }
+            if (text[i] == 'Time') {
+              times.push(text[i + 1].replace('\n', '').replace('*', ''))
+            }
+            if (text[i] == 'Departs') {
+              let words = [];
+              for (var x = i + 1; x < text.length; x++) {
+                if (text[x].includes('\n')) {
+                  words.push(text[x].replace('\n', '').replace(' \t', '').replace(/\t/g, ''))
+                  break;
+                } else {
+                  words.push(text[x])
+                }
+              }
+              departs.push(words.join(' '));
+            }
+          }
+          const response = {
+            ferries: [],
+            meta: {
+              endpoint: buildFerryEndpoint(this.options, stop_number)
+            }
+          }
+          /*
+           * Loops through all the found values, pushing each one with it's
+           * respective partners to the final `buses` array.
+           */
+          for (var i = 0; i < times.length; i++) {
+            response.ferries.push({
+              departs: departs[i],
+              routes: routes[i],
+              time: times[i]
+            })
+          }
+          return resolve(response);
+        })
+        .catch(err => {
+          return reject(err)
+        })
+    })
+  }
 }
 function cleanSmartRiderNumber(number) {
   const string = number.toString()
@@ -109,5 +236,11 @@ function buildSmartRiderEndpoint(options, number) {
 }
 function buildBusStopEndpoint(options, number) {
   return `${options.endpoint}${options.busStopEndpoint}?SN=${number}`
+}
+function buildFerryEndpoint(options, number) {
+  return `${options.endpoint}${options.ferryEndpoint}?SN=${number}`
+}
+function buildTrainEndpoint(options, direction, trainline, station) {
+  return `${options.endpoint}${options.trainEndpoint}?direction=${direction}&station=${station}&trainline=${trainline}`
 }
 module.exports = API;
