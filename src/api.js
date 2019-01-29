@@ -1,6 +1,10 @@
 const Axios = require('axios');
 const Cheerio = require('cheerio');
-
+/**
+ * The Transperth API Class.
+ * @alias TransPerthAPI
+ * @name TransPerthAPI Constructor
+ */
 class API {
   constructor(opts = {}) {
     if (typeof opts !== 'object') {
@@ -14,6 +18,23 @@ class API {
       trainEndpoint: opts.trainEndpoint || 'Trains/TrainResults.aspx'
     };
   }
+  /**
+   * The options passed to the Transperth API Constructor
+   * @typedef {Object} Options
+   * @property {string} endpoint - The global endpoint
+   * @property {string} smartRiderEndpoint - The smartrider API endpoint
+   * @property {string} busStopEndpoint - The bus stop API endpoint
+   * @property {string} ferryEndpoint - The ferry API endpoint
+   * @property {string} trainEndpoint - The ferry API endpoint
+   * @example
+   * const opts = {
+     endpoint: 'http://136213.mobi/',
+     smartRiderEndpoint: 'SmartRider/SmartRiderResult.aspx',
+     busStopEndpoint: 'Bus/StopResults.aspx',
+     ferryEndpoint: 'Ferry/FerryResults.aspx',
+     trainEndpoint: 'Trains/TrainResults.aspx'
+    }
+   */
   smartRiderInfo(smartrider_id) {
     if (!smartrider_id) throw new Error('SmartRider number not present.');
     const number = cleanSmartRiderNumber(smartrider_id);

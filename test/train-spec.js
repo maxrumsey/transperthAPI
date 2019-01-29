@@ -6,7 +6,7 @@ let train
 try {
   train = require('./auth.json').train;
 } catch (e) {
-  train = process.env.train;
+  train = JSON.parse(process.env.train);
 }
 module.exports = function() {
   describe('Initialisation', function() {
