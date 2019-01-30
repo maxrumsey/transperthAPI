@@ -1,4 +1,8 @@
 # TransPerth API
+[![Build Status](https://travis-ci.org/maxrumsey/transperthAPI.svg?branch=master)](https://travis-ci.org/maxrumsey/transperthAPI)
+![](https://img.shields.io/npm/v/transperthapi.svg?style=flat)
+[![Coverage Status](https://coveralls.io/repos/github/maxrumsey/transperthAPI/badge.svg?branch=master)](https://coveralls.io/github/maxrumsey/transperthAPI?branch=master)
+
 This is an API that allows read-only access to information from TransPerth such as the scheduled arrival time of trains, buses and ferries at stopping points as well as SmartRider data.
 
 ## Documentation
