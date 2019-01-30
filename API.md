@@ -20,7 +20,6 @@ returns: Promise
 
 Takes a SmartRider card number as the only argument. Returns a promise. The balance can be delayed by as much as two days.
 
-The 'SR' and any spaces in the card number will be cleaned away so you can pass values like this: `SR 123456789` and ` 1234  5678 SR  9`
 ```js
 {
   balance: '$10.09',

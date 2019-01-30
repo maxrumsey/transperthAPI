@@ -2,11 +2,10 @@ const { expect } = require('chai');
 const ts = require('../')
 const Transperth = new ts();
 
-let train
-try {
-  train = require('./auth.json').train;
-} catch (e) {
-  train = JSON.parse(process.env.train);
+const train = {
+  "direction": "to Perth",
+  "station": "Armadale",
+  "trainline": "Armadale"
 }
 module.exports = function() {
   describe('Initialisation', function() {

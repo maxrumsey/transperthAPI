@@ -1,7 +1,7 @@
 {
   "name": "transperthapi",
   "version": "1.0.0",
-  "description": "",
+  "description": "An API written to scrape data from TransPerth services.",
   "main": "index.js",
   "scripts": {
     "test": "./node_modules/.bin/nyc --reporter=html --reporter=text ./node_modules/.bin/mocha --timeout 5000",
@@ -11,10 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^0.18.0",
-    "cheerio": "^1.0.0-rc.2",
-    "esdoc": "^1.1.0",
-    "esdoc-standard-plugin": "^1.0.0",
-    "express": "^4.16.4"
+    "cheerio": "^1.0.0-rc.2"
   },
   "devDependencies": {
     "chai": "^4.2.0",

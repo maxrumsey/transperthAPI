@@ -45,13 +45,27 @@ class API {
       Axios.get(buildSmartRiderEndpoint(this.options, number))
         .then(data => {
           const html = Cheerio.load(data.data);
-          const response = {
-            balance: html('#lblCurrentBalance').contents()[0].data,
-            conc_type: html('#lblType').contents()[0].data,
-            conc_expiry: html('#lblExpires').contents()[0].data,
-            autoload: html('#lblAutoload').contents()[0].data,
-            meta: {
-              endpoint: buildSmartRiderEndpoint(this.options, number)
+          let response;
+          try {
+            response = {
+              balance: html('#lblCurrentBalance').contents()[0].data,
+              conc_type: html('#lblType').contents()[0].data,
+              conc_expiry: html('#lblExpires').contents()[0].data,
+              autoload: html('#lblAutoload').contents()[0].data,
+              meta: {
+                endpoint: buildSmartRiderEndpoint(this.options, number)
+              }
+            }
+          } catch (e) {
+            response = {
+              balance: null,
+              conc_type: null,
+              conc_expiry: null,
+              autoload: null,
+              meta: {
+                endpoint: buildSmartRiderEndpoint(this.options, number),
+                error: e.message || e
+              }
             }
           }
           return resolve(response);

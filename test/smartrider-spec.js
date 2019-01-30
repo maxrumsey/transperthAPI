@@ -41,7 +41,7 @@ module.exports = function() {
       })
     })
     describe('Failure', function() {
-      it('Should reject with error if it fails.', function(done) {
+      it('Should reject with error if it fails due to a network error.', function(done) {
         const newTransperth = new ts();
         newTransperth.options.endpoint = 'eqwew'
         newTransperth.smartRiderInfo(smartrider_number).then(() => {
@@ -49,6 +49,26 @@ module.exports = function() {
         })
         .catch(e => {
           expect(e).to.be.an('error')
+          done()
+        })
+      })
+      it('Should return null object if it fails due to a user input error.', function(done) {
+        const newTransperth = new ts();
+        newTransperth.smartRiderInfo('123456789').then(res => {
+          expect(res.balance).to.be.a('null')
+          done()
+        })
+        .catch(e => {
+          done()
+        })
+      })
+      it('Response should contain error message if it fails due to a user input error.', function(done) {
+        const newTransperth = new ts();
+        newTransperth.smartRiderInfo('123456789').then(res => {
+          expect(res.meta.error).to.contain('Cannot read property')
+          done()
+        })
+        .catch(e => {
           done()
         })
       })
