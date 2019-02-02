@@ -248,7 +248,7 @@ class API {
           for (var i = 0; i < times.length; i++) {
             response.ferries.push({
               departs: departs[i],
-              routes: routes[i],
+              route: routes[i],
               time: times[i]
             })
           }
