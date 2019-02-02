@@ -158,7 +158,7 @@ class API {
             }
             if (text[i] == 'Pattern') {
               let stops = [];
-              for (var x = i; x < text.length; x++) {
+              for (var x = i + 1; x < text.length; x++) {
                 if (text[x].includes('\n')) {
                   stops.push(text[x].replace('\n', '').replace('\t\t\t\t', ''))
                   break;

@@ -1,6 +1,6 @@
 {
   "name": "transperthapi",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "An API written to scrape data from TransPerth services.",
   "main": "index.js",
   "scripts": {
